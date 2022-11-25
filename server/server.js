@@ -41,6 +41,14 @@ async function createServer() {
   app.get("*", (req, res) => {
     console.log(req.url);
     res.end("pong!");
+    /**
+     * 1. Match the route, the information of the route should tell us where to 'import' the Component, which means the route is mapped 
+     *    to the path of the Component in some strategy.
+     * 2. The importing Component should be compiled to js, if it's jsx still, we need some technic such as webpack loader to compile if first.
+     *    In Next.js, the renderer itself is a tsx file.
+     * 3. Finally, we pipe the stream to the client, and the client will get the rendered component, we can use the 'use' hook await the res, then
+     *    render it like other children component.
+     */
   });
   // app.use(express.static("dist"));
 
