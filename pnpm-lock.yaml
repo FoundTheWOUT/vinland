@@ -5,15 +5,13 @@ specifiers:
   '@babel/register': ^7.18.9
   '@swc/cli': ^0.1.57
   '@swc/core': ^1.3.19
-  '@types/react': ^18.0.24
-  '@types/react-dom': ^18.0.8
   '@vitejs/plugin-react': ^2.2.0
   babel-preset-react-app: ^10.0.1
   express: ^4.18.2
   nodemon: ^2.0.20
-  react: ^18.2.0
-  react-dom: ^18.2.0
-  react-server-dom-webpack: 0.0.0-experimental-0cc724c77-20211125
+  react: 18.3.0-next-2655c9354-20221121
+  react-dom: 18.3.0-next-2655c9354-20221121
+  react-server-dom-webpack: 18.3.0-next-2655c9354-20221121
   vite: ^3.2.3
   webpack: ^5.75.0
 
@@ -23,16 +21,14 @@ dependencies:
   babel-preset-react-app: 10.0.1
   express: 4.18.2
   nodemon: 2.0.20
-  react: 18.2.0
-  react-dom: 18.2.0_react@18.2.0
-  react-server-dom-webpack: 0.0.0-experimental-0cc724c77-20211125_sjkfibpvkg33iagsiij4zgoske
+  react: 18.3.0-next-2655c9354-20221121
+  react-dom: 18.3.0-next-2655c9354-20221121_upagvlsqpdiar66utln7caeowy
+  react-server-dom-webpack: 18.3.0-next-2655c9354-20221121_rg2oqoool3zjevmjdbxk4bmf4a
   webpack: 5.75.0_@swc+core@1.3.19
 
 devDependencies:
   '@swc/cli': 0.1.57_@swc+core@1.3.19
   '@swc/core': 1.3.19
-  '@types/react': 18.0.25
-  '@types/react-dom': 18.0.9
   '@vitejs/plugin-react': 2.2.0_vite@3.2.4
   vite: 3.2.4
 
@@ -1585,28 +1581,6 @@ packages:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
     dev: false
 
-  /@types/prop-types/15.7.5:
-    resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}
-    dev: true
-
-  /@types/react-dom/18.0.9:
-    resolution: {integrity: sha512-qnVvHxASt/H7i+XG1U1xMiY5t+IHcPGUK7TDMDzom08xa7e86eCeKOiLZezwCKVxJn6NEiiy2ekgX8aQssjIKg==}
-    dependencies:
-      '@types/react': 18.0.25
-    dev: true
-
-  /@types/react/18.0.25:
-    resolution: {integrity: sha512-xD6c0KDT4m7n9uD4ZHi02lzskaiqcBxf4zi+tXZY98a04wvc0hi/TcCPC2FOESZi51Nd7tlUeOJY8RofL799/g==}
-    dependencies:
-      '@types/prop-types': 15.7.5
-      '@types/scheduler': 0.16.2
-      csstype: 3.1.1
-    dev: true
-
-  /@types/scheduler/0.16.2:
-    resolution: {integrity: sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==}
-    dev: true
-
   /@vitejs/plugin-react/2.2.0_vite@3.2.4:
     resolution: {integrity: sha512-FFpefhvExd1toVRlokZgxgy2JtnBOdp4ZDsq7ldCWaqGSGn9UhWMAVm/1lxPL14JfNS5yGz+s9yFrQY6shoStA==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -2057,10 +2031,6 @@ packages:
       path-type: 4.0.0
       yaml: 1.10.2
     dev: false
-
-  /csstype/3.1.1:
-    resolution: {integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==}
-    dev: true
 
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
@@ -2846,11 +2816,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
-  /object-assign/4.1.1:
-    resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
-    engines: {node: '>=0.10.0'}
-    dev: false
-
   /object-inspect/1.12.2:
     resolution: {integrity: sha512-z+cPxW0QGUp0mcqcsgQyLVRDoXFQbXOwBaqyF7VIgI4TWNQsDHrBpUQslRmIfAoYWdYzs6UlKJtB2XJpTaNSpQ==}
     dev: false
@@ -3002,14 +2967,14 @@ packages:
       unpipe: 1.0.0
     dev: false
 
-  /react-dom/18.2.0_react@18.2.0:
-    resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
+  /react-dom/18.3.0-next-2655c9354-20221121_upagvlsqpdiar66utln7caeowy:
+    resolution: {integrity: sha512-v0mcqq47XUad4FaPIdMgDhTWBgmgEs3SO9KDge9k4HhHziWWI2mOp6+KpOUkm2llEsdyrrGFtpVWJgjkuAhe5g==}
     peerDependencies:
-      react: ^18.2.0
+      react: 18.3.0-next-2655c9354-20221121
     dependencies:
       loose-envify: 1.4.0
-      react: 18.2.0
-      scheduler: 0.23.0
+      react: 18.3.0-next-2655c9354-20221121
+      scheduler: 0.24.0-next-2655c9354-20221121
     dev: false
 
   /react-refresh/0.14.0:
@@ -3017,25 +2982,24 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /react-server-dom-webpack/0.0.0-experimental-0cc724c77-20211125_sjkfibpvkg33iagsiij4zgoske:
-    resolution: {integrity: sha512-HAb7dM16mkMqBQRctT5+AkhXML8STWNLJVS3VgQUuTcl28f+Mch6OKw4yaSPayptGJ0EsTkoi6XiUf5cz2vUeQ==}
+  /react-server-dom-webpack/18.3.0-next-2655c9354-20221121_rg2oqoool3zjevmjdbxk4bmf4a:
+    resolution: {integrity: sha512-jz+9SMPcycBtxoOhMMaTeYM2FFkmwIybBFfm4uybwKdAn/Ib0BFWMwS07NhNWp+f72rZNGy+1mI9w3fHrV9rBw==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
-      react: 0.0.0-experimental-0cc724c77-20211125
-      react-dom: 0.0.0-experimental-0cc724c77-20211125
+      react: 18.3.0-next-2655c9354-20221121
+      react-dom: 18.3.0-next-2655c9354-20221121
       webpack: ^5.59.0
     dependencies:
       acorn: 6.4.2
       loose-envify: 1.4.0
       neo-async: 2.6.2
-      object-assign: 4.1.1
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
+      react: 18.3.0-next-2655c9354-20221121
+      react-dom: 18.3.0-next-2655c9354-20221121_upagvlsqpdiar66utln7caeowy
       webpack: 5.75.0_@swc+core@1.3.19
     dev: false
 
-  /react/18.2.0:
-    resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
+  /react/18.3.0-next-2655c9354-20221121:
+    resolution: {integrity: sha512-hWF8yQIDxvU8YTtSj7/QDf1L6aFYkRIdj4QXgDklHCCUu9w9YuNkFPZ28TcikNLKPyJJGp6HtRi5DY9y/zisqQ==}
     engines: {node: '>=0.10.0'}
     dependencies:
       loose-envify: 1.4.0
@@ -3132,8 +3096,8 @@ packages:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
     dev: false
 
-  /scheduler/0.23.0:
-    resolution: {integrity: sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==}
+  /scheduler/0.24.0-next-2655c9354-20221121:
+    resolution: {integrity: sha512-QBY1phydX9w6hljVNKRw4vmVQfSL7wtTcIQ9SyVQt3DZJPN1cVnnKDDEOsVC5scZT+NCYApS3ebBOvEVk0qW2A==}
     dependencies:
       loose-envify: 1.4.0
     dev: false

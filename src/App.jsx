@@ -1,24 +1,21 @@
 import React, { useState } from "react";
-import { createFromFetch } from "react-server-dom-webpack/client";
-// import reactLogo from './assets/react.svg'
-// import './App.css'
+import reactLogo from "./assets/react.svg";
+import "./App.css";
+import HiRSC from "./Hi.server";
+
+console.log("React version:", React.version);
 function App() {
   const [count, setCount] = useState(0);
-  // const res = createFromFetch(fetch("/react"));
-  fetch("/react")
-    .then((res) => res.text())
-    .then((res) => {
-      console.log(res);
-    });
 
   return (
     <div className="App">
+      <HiRSC />
       <div>
         <a href="https://vitejs.dev" target="_blank">
           <img src="/vite.svg" className="logo" alt="Vite logo" />
         </a>
         <a href="https://reactjs.org" target="_blank">
-          <img src="" className="logo react" alt="React logo" />
+          <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
       <h1>Vite + React2</h1>

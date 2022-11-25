@@ -3,14 +3,8 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import express from "express";
-// import { createServer as createViteServer } from "vite";
-import pkg from "react-server-dom-webpack/writer.node.server";
-import { readFile } from "fs/promises";
-// import App from '../dist'
-import babelRegister from "@babel/register";
-import Comp from "../dist/App.js";
-
-const { renderToPipeableStream } = pkg;
+import { renderToPipeableStream } from "react-server-dom-webpack/server";
+import Comp from "../dist/Comp.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -36,11 +30,12 @@ async function createServer() {
   // });
 
   app.get("/react", async (req, res) => {
-    console.log(req.url);
-    const stream = renderToPipeableStream(React.createElement(Comp));
-    // console.log(stream);
-    // serve index.html - we will tackle this next
-    stream.pipe(res);
+    setTimeout(() => {
+      const stream = renderToPipeableStream(React.createElement(Comp));
+      // console.log(stream);
+      // serve index.html - we will tackle this next
+      stream.pipe(res);
+    }, 5000);
   });
 
   app.get("*", (req, res) => {
