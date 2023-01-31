@@ -3,8 +3,9 @@ import { createFromFetch } from "react-server-dom-webpack/client";
 
 const HelloRSC = () => {
   const res = createFromFetch(fetch("/react"));
-  const root = use(res);
-  return <>{root}</>;
+  const children = use(res);
+
+  return <>{children}</>;
 };
 
 const withSuspense = () => (

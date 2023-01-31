@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import "./App.css";
 import HiRSC from "./Hi.server";
+import ErrorBoundary from './ErrorBoundary'
 
-console.log("React version:", React.version);
 function App() {
   const [count, setCount] = useState(0);
 
@@ -34,4 +34,12 @@ function App() {
   );
 }
 
-export default App;
+const Wrapper = () => {
+  return (
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
+  );
+};
+
+export default Wrapper;
