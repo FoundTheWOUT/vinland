@@ -1,44 +1,44 @@
-import React, { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import "./App.css";
-import HiRSC from "./Hi.server";
-import ErrorBoundary from './ErrorBoundary'
+import React, { Suspense } from "react";
+// import reactLogo from "./assets/react.svg";
+// import "./App.css";
+// import ErrorBoundary from "./ErrorBoundary.js";
+// import { createFromFetch } from "react-server-dom-webpack/client";
+// import AddTodo from "./AddTodo.client";
+import TodoList from "./Todo.server";
+import Comp from "./Comp.server";
+
+// let todo = createFromFetch(fetch("/todo"));
 
 function App() {
-  const [count, setCount] = useState(0);
+  // const [_, startTransition] = useTransition();
+  // const todoComp = use(todo);
 
   return (
     <div className="App">
-      <HiRSC />
+      <Comp />
       <div>
         <a href="https://vitejs.dev" target="_blank">
           <img src="/vite.svg" className="logo" alt="Vite logo" />
         </a>
         <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
+          {/* <img src={reactLogo} className="logo react" alt="React logo" /> */}
         </a>
       </div>
       <h1>Vite + React2</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+      <div>
+        <div>todo!</div>
+        {/* <AddTodo /> */}
+        <TodoList />
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </div>
   );
 }
 
 const Wrapper = () => {
   return (
-    <ErrorBoundary>
+    <Suspense>
       <App />
-    </ErrorBoundary>
+    </Suspense>
   );
 };
 

@@ -1,10 +1,10 @@
 import React, { Suspense, use } from "react";
 import { createFromFetch } from "react-server-dom-webpack/client";
 
-const HelloRSC = () => {
-  const res = createFromFetch(fetch("/react"));
-  const children = use(res);
+const res = createFromFetch(fetch("/react"));
 
+const HelloRSC = () => {
+  const children = use(res);
   return <>{children}</>;
 };
 

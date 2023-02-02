@@ -14,10 +14,10 @@ export default defineConfig({
     },
   },
   clearScreen:false,
-  server: {
-    proxy: {
-      "/react": "http://localhost:3000",
-    },
-  },
+  // server: {
+  //   proxy: {
+  //     "/react": "http://localhost:3000",
+  //   },
+  // },
   plugins: [react()],
 });
