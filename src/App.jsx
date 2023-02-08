@@ -25,7 +25,7 @@ function App() {
         </a>
       </div>
       <h1>Vite + React2</h1>
-      <h2>hhhhhhhhhhhhhhhhhhhhhhhhhhhhhh2</h2>
+      <h2>hhhhhhhhhhhhhhhhc</h2>
       <div>
         <div>todo!</div>
         <AddTodo />

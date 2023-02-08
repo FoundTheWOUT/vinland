@@ -1,14 +1,15 @@
 const React = require("react");
 const register = require("react-server-dom-webpack/node-register");
 register();
-const { readFileSync, writeFileSync } = require("fs");
+const { readFileSync, writeFileSync, watchFile } = require("fs");
 const path = require("path");
 const express = require("express");
 const { renderToPipeableStream } = require("react-server-dom-webpack/server");
 const swc = require("@swc/core");
 const { createServer: createViteServer } = require("vite");
-const morgan = require('morgan')
-// const bodyParser = require("body-parser");
+const morgan = require("morgan");
+const bodyParser = require("body-parser");
+const ws = require("ws");
 
 const todoList = [{ label: "test" }];
 const addTodo = (item) => {
@@ -78,9 +79,11 @@ const pipeComponentToRes = (comp, res) => {
 };
 
 async function createServer() {
+  const wsServer = new ws.Server({ noServer: true });
+
   const app = express();
-  app.use(express.json());
-  app.use(morgan('tiny'));
+  app.use(bodyParser.json());
+  app.use(morgan("tiny"));
 
   const vite = await createViteServer({
     server: { middlewareMode: true },
@@ -127,27 +130,39 @@ async function createServer() {
     pipeComponentToRes(Component, res);
   });
 
-  // app.get("/", () => {
-  //   const html = readFileSync("./index.html", "utf-8");
-  //   res.end(html);
-  //   /**
-  //    * ? Next.js 13, how 'use client' work
-  //    *
-  //    * * Next.js currently compile tsx file through swc. And determine whether the component is server or client.(search 'use client' in body)
-  //    * * When using some invalid api in server component, for example, importing 'useState', it will emit error.
-  //    *
-  //    * 1. Match the route, the information of the route should tell us where to 'import' the Component, which means the route is mapped
-  //    *    to the path of the Component in some strategy.
-  //    * 2. The importing Component should be compiled to js, if it's jsx still, we need some technic such as webpack loader to compile if first.
-  //    *    In Next.js, the renderer itself is a tsx file.
-  //    * 3. Finally, we pipe the stream to the client, and the client will get the rendered component, we can use the 'use' hook await the res, then
-  //    *    render it like other children component.
-  //    */
-  // });
+  app.get("/", (req, res) => {
+    const html = readFileSync("./index.html", "utf-8");
+    res.end(html);
+    /**
+     * ? Next.js 13, how 'use client' work
+     *
+     * * Next.js currently compile tsx file through swc. And determine whether the component is server or client.(search 'use client' in body)
+     * * When using some invalid api in server component, for example, importing 'useState', it will emit error.
+     *
+     * 1. Match the route, the information of the route should tell us where to 'import' the Component, which means the route is mapped
+     *    to the path of the Component in some strategy.
+     * 2. The importing Component should be compiled to js, if it's jsx still, we need some technic such as webpack loader to compile if first.
+     *    In Next.js, the renderer itself is a tsx file.
+     * 3. Finally, we pipe the stream to the client, and the client will get the rendered component, we can use the 'use' hook await the res, then
+     *    render it like other children component.
+     */
+  });
+  // app.use("/build", express.static("build"));
   app.use(vite.middlewares);
 
-  app.listen(3000, () => {
+  const server = app.listen(3000, () => {
     console.log("running server on http://localhost:3000/");
+  });
+
+  server.on("upgrade", (req, socket, head) => {
+    wsServer.handleUpgrade(req, req.socket, head, (client) => {
+      watchFile("./src/App.jsx", () => {
+        client.send("file-updated");
+      });
+      client.addEventListener("message", ({ data }) => {
+        console.log(data);
+      });
+    });
   });
 }
 
