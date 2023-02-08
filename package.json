@@ -1,10 +1,10 @@
 {
-  "name": "react-dom-server-demo",
+  "name": "vinland",
   "private": true,
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "serve": "nodemon --conditions=react-server --ignore dist ./server/server.js",
+    "serve": "nodemon --conditions=react-server --ignore dist ./server/vinland.server.js",
     "build": "vite build && swc src -d dist -w",
     "preview": "vite preview"
   },
@@ -13,12 +13,16 @@
     "@babel/register": "^7.18.9",
     "babel-preset-react-app": "^10.0.1",
     "body-parser": "^1.20.1",
+    "css-loader": "^6.7.3",
     "dayjs": "^1.11.7",
     "express": "^4.18.2",
+    "morgan": "^1.10.0",
     "nodemon": "^2.0.20",
     "react": "18.3.0-next-2655c9354-20221121",
     "react-dom": "18.3.0-next-2655c9354-20221121",
-    "react-server-dom-webpack": "18.3.0-next-2655c9354-20221121",
+    "react-server-dom-webpack": "18.3.0-next-2ef24145e-20230202",
+    "style-loader": "^3.3.1",
+    "swc-loader": "^0.2.3",
     "swr": "^2.0.3",
     "webpack": "^5.75.0"
   },

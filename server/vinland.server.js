@@ -1,16 +1,24 @@
 const React = require("react");
+const register = require("react-server-dom-webpack/node-register");
+register();
 const { readFileSync, writeFileSync } = require("fs");
 const path = require("path");
 const express = require("express");
 const { renderToPipeableStream } = require("react-server-dom-webpack/server");
 const swc = require("@swc/core");
 const { createServer: createViteServer } = require("vite");
-const bodyParser = require("body-parser");
+const morgan = require('morgan')
+// const bodyParser = require("body-parser");
 
 const todoList = [{ label: "test" }];
 const addTodo = (item) => {
   todoList.push(item);
 };
+
+function requireUncached(module) {
+  delete require.cache[require.resolve(module)];
+  return require(module);
+}
 
 const ensureServerComponent = async (name) => {
   try {
@@ -47,7 +55,7 @@ const ensureServerComponent = async (name) => {
     // const { default: Component } = await import(
     //   `${outputPath}?cache=${Date.now()}`
     // );
-    const Mod = require(outputPath);
+    const Mod = requireUncached(outputPath);
 
     return {
       Component: Mod.default,
@@ -60,14 +68,19 @@ const ensureServerComponent = async (name) => {
 
 const pipeComponentToRes = (comp, res) => {
   // serialize component to stream
-  const stream = renderToPipeableStream(React.createElement(comp));
+  const manifest = readFileSync("./build/react-client-manifest.json", "utf-8");
+  const moduleMap = JSON.parse(manifest);
+  const stream = renderToPipeableStream(React.createElement(comp), {
+    clientManifest: moduleMap,
+  });
   // serve index.html - we will tackle this next
   stream.pipe(res);
 };
 
 async function createServer() {
   const app = express();
-  app.use(bodyParser.json());
+  app.use(express.json());
+  app.use(morgan('tiny'));
 
   const vite = await createViteServer({
     server: { middlewareMode: true },
@@ -79,7 +92,7 @@ async function createServer() {
     try {
       setTimeout(async () => {
         pipeComponentToRes(Component, res);
-      }, 800);
+      }, 3000);
     } catch (error) {
       console.error(error);
     }

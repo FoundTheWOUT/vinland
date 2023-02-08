@@ -3,7 +3,7 @@ import React, { Suspense } from "react";
 // import "./App.css";
 // import ErrorBoundary from "./ErrorBoundary.js";
 // import { createFromFetch } from "react-server-dom-webpack/client";
-// import AddTodo from "./AddTodo.client";
+import AddTodo from "./AddTodo.client";
 import TodoList from "./Todo.server";
 import Comp from "./Comp.server";
 
@@ -25,9 +25,10 @@ function App() {
         </a>
       </div>
       <h1>Vite + React2</h1>
+      <h2>hhhhhhhhhhhhhhhhhhhhhhhhhhhhhh2</h2>
       <div>
         <div>todo!</div>
-        {/* <AddTodo /> */}
+        <AddTodo />
         <TodoList />
       </div>
     </div>

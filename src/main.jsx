@@ -2,7 +2,7 @@ import React, { Suspense, use } from "react";
 import ReactDOM from "react-dom/client";
 import { createFromFetch } from "react-server-dom-webpack/client";
 import "./index.css";
-import ErrorBoundary from './ErrorBoundary'
+import ErrorBoundary from "./ErrorBoundary";
 
 const root = ReactDOM.createRoot(document.getElementById("__vinland"));
 
