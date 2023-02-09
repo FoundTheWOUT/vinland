@@ -1,3 +1,3 @@
 ## vinland
 
-Super tiny RSC demo
+Tiny RSC Server

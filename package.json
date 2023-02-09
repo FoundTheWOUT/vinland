@@ -1,11 +1,11 @@
 {
-  "name": "vinland",
   "private": true,
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "dev": "vite",
-    "serve": "nodemon --conditions=react-server --ignore dist ./server/vinland.server.js",
     "build": "vite build && swc src -d dist -w",
+    "build-server": "tsc -b",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -29,7 +29,9 @@
   "devDependencies": {
     "@swc/cli": "^0.1.57",
     "@swc/core": "^1.3.19",
+    "@types/node": "^18.13.0",
     "@vitejs/plugin-react": "^2.2.0",
+    "typescript": "^4.9.5",
     "vite": "^4.0.4",
     "ws": "^8.12.0"
   }

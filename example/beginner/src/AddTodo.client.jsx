@@ -1,7 +1,7 @@
 const AddTodo = () => {
   const handleClick = () => {
     const input = document.getElementById("input");
-    fetch("http://127.0.0.1:3000/todo", {
+    fetch("http://127.0.0.1:3500/todo", {
       method: "POST",
       headers: new Headers({
         "Content-Type": "application/json",

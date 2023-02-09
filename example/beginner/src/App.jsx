@@ -4,7 +4,7 @@ import React, { Suspense } from "react";
 // import ErrorBoundary from "./ErrorBoundary.js";
 // import { createFromFetch } from "react-server-dom-webpack/client";
 import AddTodo from "./AddTodo.client";
-import TodoList from "./Todo.server";
+// import TodoList from "./Todo.server";
 import Comp from "./Comp.server";
 
 // let todo = createFromFetch(fetch("/todo"));
@@ -25,11 +25,11 @@ function App() {
         </a>
       </div>
       <h1>Vite + React2</h1>
-      <h2>hhhhhhhhhhhhhhhhc</h2>
+      <h2>hhhhhhhhhhhhc</h2>
       <div>
         <div>todo!</div>
         <AddTodo />
-        <TodoList />
+        {/* <TodoList /> */}
       </div>
     </div>
   );

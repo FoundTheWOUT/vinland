@@ -1,15 +1,17 @@
-const React = require("react");
-const register = require("react-server-dom-webpack/node-register");
+import React from "react";
+import register from "react-server-dom-webpack/node-register";
+import { readFileSync, writeFileSync, watchFile } from "fs";
+import path from "path";
+import express from "express";
+import { renderToPipeableStream } from "react-server-dom-webpack/server";
+import swc from "@swc/core";
+import { createServer as createViteServer } from "vite";
+import morgan from "morgan";
+import bodyParser from "body-parser";
+import ws from "ws";
+import { PORT } from "./const";
+
 register();
-const { readFileSync, writeFileSync, watchFile } = require("fs");
-const path = require("path");
-const express = require("express");
-const { renderToPipeableStream } = require("react-server-dom-webpack/server");
-const swc = require("@swc/core");
-const { createServer: createViteServer } = require("vite");
-const morgan = require("morgan");
-const bodyParser = require("body-parser");
-const ws = require("ws");
 
 const todoList = [{ label: "test" }];
 const addTodo = (item) => {
@@ -36,6 +38,7 @@ const ensureServerComponent = async (name) => {
     const { code } = await swc.transform(comp, {
       jsc: {
         parser: {
+          syntax: "ecmascript",
           jsx: true,
         },
       },
@@ -56,7 +59,7 @@ const ensureServerComponent = async (name) => {
     // const { default: Component } = await import(
     //   `${outputPath}?cache=${Date.now()}`
     // );
-    const Mod = requireUncached(outputPath);
+    const Mod = require(outputPath);
 
     return {
       Component: Mod.default,
@@ -150,8 +153,8 @@ async function createServer() {
   // app.use("/build", express.static("build"));
   app.use(vite.middlewares);
 
-  const server = app.listen(3000, () => {
-    console.log("running server on http://localhost:3000/");
+  const server = app.listen(PORT, () => {
+    console.log(`running server on http://localhost:${PORT}/`);
   });
 
   server.on("upgrade", (req, socket, head) => {

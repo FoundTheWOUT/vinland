@@ -8,7 +8,7 @@ const root = ReactDOM.createRoot(document.getElementById("__vinland"));
 
 let index = createFromFetch(fetch("/__vinland/index"));
 
-const socket = new window.WebSocket("ws://localhost:3000/__vinland/hmr");
+const socket = new window.WebSocket(`ws://localhost:3500/__vinland/hmr`);
 
 socket.onopen = () => {
   console.log("open");
