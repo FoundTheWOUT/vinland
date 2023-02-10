@@ -13,6 +13,7 @@ export const bundle = ({ cwd }) => {
       mode: isProduction ? "production" : "development",
       devtool: isProduction ? "source-map" : "cheap-module-source-map",
       entry: [path.resolve(cwd, "src/main.jsx")],
+      context: path.resolve(cwd),
       output: {
         path: buildOutput,
         filename: "main.js",
