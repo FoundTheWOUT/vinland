@@ -1,8 +1,8 @@
 {
   "name": "vinland",
   "scripts": {
-    "serve": "nodemon --conditions=react-server ./dist/vinland.server.js",
-    "build": "tsc -b"
+    "build": "tsc -b",
+    "dev": "tsc -w"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.2",

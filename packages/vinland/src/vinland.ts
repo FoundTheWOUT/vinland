@@ -10,6 +10,7 @@ import morgan from "morgan";
 import bodyParser from "body-parser";
 import ws from "ws";
 import { PORT } from "./const";
+import { bundle } from "./prebundle";
 
 register();
 
@@ -17,6 +18,9 @@ const todoList = [{ label: "test" }];
 const addTodo = (item) => {
   todoList.push(item);
 };
+
+const root = process.argv[2];
+console.log("Root Path:", path.resolve(root));
 
 function requireUncached(module) {
   delete require.cache[require.resolve(module)];
@@ -26,13 +30,11 @@ function requireUncached(module) {
 const ensureServerComponent = async (name) => {
   try {
     const comp = readFileSync(
-      path.resolve(
-        __dirname,
+      path.join(
+        root,
         name === "index" ? `../src/App.jsx` : `../src/${name}.server.jsx`
       ),
-      {
-        encoding: "utf-8",
-      }
+      "utf8"
     );
 
     const { code } = await swc.transform(comp, {
@@ -49,7 +51,7 @@ const ensureServerComponent = async (name) => {
     });
 
     const outputPath = `../dist/${name}.server.js`;
-    const writeToPath = path.resolve(__dirname, outputPath);
+    const writeToPath = path.resolve(root, outputPath);
 
     // writeFile will cause nodemon restart. we need to ignore the out folder.
     writeFileSync(writeToPath, code, "utf-8");
@@ -72,7 +74,10 @@ const ensureServerComponent = async (name) => {
 
 const pipeComponentToRes = (comp, res) => {
   // serialize component to stream
-  const manifest = readFileSync("./build/react-client-manifest.json", "utf-8");
+  const manifest = readFileSync(
+    path.join(root, "./build/react-client-manifest.json"),
+    "utf-8"
+  );
   const moduleMap = JSON.parse(manifest);
   const stream = renderToPipeableStream(React.createElement(comp), {
     clientManifest: moduleMap,
@@ -82,6 +87,10 @@ const pipeComponentToRes = (comp, res) => {
 };
 
 async function createServer() {
+  console.log("bundling...");
+  const res = await bundle({ cwd: root });
+  console.log(res);
+
   const wsServer = new ws.Server({ noServer: true });
 
   const app = express();
@@ -89,6 +98,7 @@ async function createServer() {
   app.use(morgan("tiny"));
 
   const vite = await createViteServer({
+    root,
     server: { middlewareMode: true },
     appType: "spa",
   });
@@ -134,7 +144,7 @@ async function createServer() {
   });
 
   app.get("/", (req, res) => {
-    const html = readFileSync("./index.html", "utf-8");
+    const html = readFileSync(path.join(root, "./index.html"), "utf-8");
     res.end(html);
     /**
      * ? Next.js 13, how 'use client' work
@@ -159,7 +169,7 @@ async function createServer() {
 
   server.on("upgrade", (req, socket, head) => {
     wsServer.handleUpgrade(req, req.socket, head, (client) => {
-      watchFile("./src/App.jsx", () => {
+      watchFile(path.join(root, "./src/App.jsx"), () => {
         client.send("file-updated");
       });
       client.addEventListener("message", ({ data }) => {

@@ -3,10 +3,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build && swc src -d dist -w",
-    "build-server": "tsc -b",
-    "preview": "vite preview"
+    "serve": "nodemon --conditions=react-server --watch packages/vinland/dist packages/vinland/dist/vinland.js"
   },
   "dependencies": {
     "@babel/core": "^7.20.2",
@@ -18,9 +15,9 @@
     "express": "^4.18.2",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.20",
-    "react": "18.3.0-next-2655c9354-20221121",
-    "react-dom": "18.3.0-next-2655c9354-20221121",
-    "react-server-dom-webpack": "18.3.0-next-2ef24145e-20230202",
+    "react": "18.3.0-next-6ddcbd4f9-20230209",
+    "react-dom": "18.3.0-next-6ddcbd4f9-20230209",
+    "react-server-dom-webpack": "18.3.0-next-6ddcbd4f9-20230209",
     "style-loader": "^3.3.1",
     "swc-loader": "^0.2.3",
     "swr": "^2.0.3",

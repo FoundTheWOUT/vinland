@@ -1,3 +1,5 @@
+"use client";
+
 const AddTodo = () => {
   const handleClick = () => {
     const input = document.getElementById("input");
