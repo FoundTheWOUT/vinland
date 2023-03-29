@@ -3,9 +3,9 @@ import React, { Suspense } from "react";
 // import "./App.css";
 // import ErrorBoundary from "./ErrorBoundary.js";
 // import { createFromFetch } from "react-server-dom-webpack/client";
-import AddTodo from "./AddTodo.client";
+import AddTodo from "./components/AddTodo";
 // import TodoList from "./Todo.server";
-import Comp from "./Comp.server";
+import Comp from "./components/Comp";
 
 // let todo = createFromFetch(fetch("/todo"));
 

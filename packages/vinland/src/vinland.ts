@@ -1,16 +1,23 @@
 import React from "react";
 import register from "react-server-dom-webpack/node-register";
-import { readFileSync, writeFileSync, watchFile } from "fs";
+import {
+  readFileSync,
+  writeFileSync,
+  watchFile,
+  createWriteStream,
+  accessSync,
+  mkdir,
+  mkdirSync,
+} from "fs";
 import path from "path";
 import express from "express";
 import { renderToPipeableStream } from "react-server-dom-webpack/server";
 import swc from "@swc/core";
-import { createServer as createViteServer } from "vite";
 import morgan from "morgan";
 import bodyParser from "body-parser";
 import ws from "ws";
 import { PORT } from "./const";
-import { bundle } from "./prebundle";
+import { bundle } from "./bundle";
 
 register();
 
@@ -20,6 +27,9 @@ const addTodo = (item) => {
 };
 
 const root = process.argv[2];
+if (!root) {
+  throw Error("please specify root argument");
+}
 console.log("Root Path:", path.resolve(root));
 
 function requireUncached(module) {
@@ -27,41 +37,34 @@ function requireUncached(module) {
   return require(module);
 }
 
-const ensureServerComponent = async (name) => {
+const ensureServerComponent = async (
+  name: string,
+  options?: { routePath: string }
+) => {
+  let { routePath = "" } = options ?? {};
+
   try {
-    const comp = readFileSync(
-      path.join(
-        root,
-        name === "index" ? `../src/App.jsx` : `../src/${name}.server.jsx`
-      ),
-      "utf8"
+    if (routePath.startsWith("/__vinland")) {
+      const splitted = routePath.split("/");
+      splitted.splice(1, 1);
+      routePath = splitted.join("/");
+      await bundle({ cwd: root, routePath });
+    }
+    const requirePath = path.resolve(
+      root,
+      routePath
+        ? `.vinland/routes${routePath}.js`
+        : name === "index"
+        ? `../dist/App.jsx`
+        : `../dist/${name}.server.jsx`
     );
-
-    const { code } = await swc.transform(comp, {
-      jsc: {
-        parser: {
-          syntax: "ecmascript",
-          jsx: true,
-        },
-      },
-      minify: false,
-      module: {
-        type: "commonjs",
-      },
-    });
-
-    const outputPath = `../dist/${name}.server.js`;
-    const writeToPath = path.resolve(root, outputPath);
-
-    // writeFile will cause nodemon restart. we need to ignore the out folder.
-    writeFileSync(writeToPath, code, "utf-8");
 
     // cache query is to disable import caching.
     // https://github.com/nodejs/modules/issues/307
     // const { default: Component } = await import(
     //   `${outputPath}?cache=${Date.now()}`
     // );
-    const Mod = require(outputPath);
+    const Mod = require(requirePath);
 
     return {
       Component: Mod.default,
@@ -75,7 +78,7 @@ const ensureServerComponent = async (name) => {
 const pipeComponentToRes = (comp, res) => {
   // serialize component to stream
   const manifest = readFileSync(
-    path.join(root, "./build/react-client-manifest.json"),
+    path.join(root, "./.vinland/react-client-manifest.json"),
     "utf-8"
   );
   const moduleMap = JSON.parse(manifest);
@@ -87,20 +90,35 @@ const pipeComponentToRes = (comp, res) => {
 };
 
 async function createServer() {
-  console.log("bundling...");
-  const res = await bundle({ cwd: root });
-  console.log(res);
+  // pre bundle
+  console.log("pre bundling...");
+  await bundle({ cwd: root });
+  // .vinland folder created
+
+  const LOG_PATH = path.resolve(root, ".vinland", "access.log");
+  try {
+    accessSync(LOG_PATH);
+  } catch (error) {
+    writeFileSync(LOG_PATH, "");
+  }
+  const accessLogStream = createWriteStream(LOG_PATH, { flags: "a" });
 
   const wsServer = new ws.Server({ noServer: true });
 
   const app = express();
-  app.use(bodyParser.json());
-  app.use(morgan("tiny"));
+  app
+    // .use(bodyParser.json())
+    .use(morgan("common"))
+    .use(morgan("common", { stream: accessLogStream })) //logger
+    .use("/__vinland", express.static(path.resolve(root, ".vinland")));
 
-  const vite = await createViteServer({
-    root,
-    server: { middlewareMode: true },
-    appType: "spa",
+  // const vite = await createViteServer({
+  //   root,
+  //   server: { middlewareMode: true },
+  //   appType: "spa",
+  // });
+  app.get("/ping", (req, res) => {
+    return res.send("pong");
   });
 
   app.get("/react", async (req, res) => {
@@ -139,12 +157,15 @@ async function createServer() {
   });
 
   app.get("/__vinland/index", async (req, res) => {
-    const { Component } = await ensureServerComponent("index");
+    const { Component } = await ensureServerComponent("index", {
+      routePath: "/__vinland/index",
+    });
     pipeComponentToRes(Component, res);
   });
 
   app.get("/", (req, res) => {
     const html = readFileSync(path.join(root, "./index.html"), "utf-8");
+    // try to bundle page
     res.end(html);
     /**
      * ? Next.js 13, how 'use client' work
@@ -160,8 +181,7 @@ async function createServer() {
      *    render it like other children component.
      */
   });
-  // app.use("/build", express.static("build"));
-  app.use(vite.middlewares);
+  // app.use(vite.middlewares);
 
   const server = app.listen(PORT, () => {
     console.log(`running server on http://localhost:${PORT}/`);
@@ -169,11 +189,11 @@ async function createServer() {
 
   server.on("upgrade", (req, socket, head) => {
     wsServer.handleUpgrade(req, req.socket, head, (client) => {
-      watchFile(path.join(root, "./src/App.jsx"), () => {
+      watchFile(path.join(root, "./src/main.jsx"), () => {
         client.send("file-updated");
       });
       client.addEventListener("message", ({ data }) => {
-        console.log(data);
+        // console.log(data);
       });
     });
   });

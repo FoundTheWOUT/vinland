@@ -10,25 +10,41 @@ let index = createFromFetch(fetch("/__vinland/index"));
 
 const socket = new window.WebSocket(`ws://localhost:3500/__vinland/hmr`);
 
-socket.onopen = () => {
-  console.log("open");
-};
 socket.onmessage = ({ data }) => {
   switch (data) {
     case "file-updated":
-      window.location.reload();
+      {
+        if (module && module.hot) {
+          module.hot
+            .check(false)
+            .then((updatedModules) => {
+              if (!updatedModules) return null;
+              return module.hot.apply();
+            })
+            .then(
+              (updatedModules) => {
+                console.log(updatedModules);
+              },
+              (err) => {
+                console.log(err);
+                // handleApplyUpdates(err, null);
+              }
+            );
+        }
+      }
       break;
   }
 };
 
 const App = () => {
-  const app = use(index);
+  // const app = use(index);
+  console.log("recs112");
   const ping = () => {
     socket.send("ping");
   };
   return (
     <>
-      {app}
+      {/* {app} */}
       <button onClick={ping}>ping</button>
     </>
   );
