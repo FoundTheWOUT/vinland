@@ -10,42 +10,42 @@ let index = createFromFetch(fetch("/__vinland/index"));
 
 const socket = new window.WebSocket(`ws://localhost:3500/__vinland/hmr`);
 
-// function canApplyUpdates() {
-//   return module.hot.status() === "idle";
-// }
+function canApplyUpdates() {
+  return module.hot.status() === "idle";
+}
 
-// socket.onmessage = ({ data }) => {
-//   if (!module && !module.hot) {
-//     console.warn("may be webpack.HotModuleReplacementPlugin get some wrong.");
-//     return;
-//   }
-//   switch (data) {
-//     case "file-updated":
-//       {
-//         if (canApplyUpdates()) {
-//           module.hot
-//             .check(false)
-//             .then((updatedModules) => {
-//               if (!updatedModules) return null;
-//               module.hot.accept(updatedModules);
-//               return module.hot.apply();
-//             })
-//             .then(
-//               (updatedModules) => {
-//                 console.log("update applied");
-//               },
-//               (err) => {
-//                 console.log(err);
-//               }
-//             );
-//         }
-//       }
-//       break;
-//   }
-// };
+socket.onmessage = ({ data }) => {
+  if (!module && !module.hot) {
+    console.warn("may be webpack.HotModuleReplacementPlugin get some wrong.");
+    return;
+  }
+  switch (data) {
+    case "file-updated":
+      {
+        if (canApplyUpdates()) {
+          module.hot
+            .check(false)
+            .then((updatedModules) => {
+              if (!updatedModules) return null;
+              module.hot.accept(updatedModules);
+              return module.hot.apply();
+            })
+            .then(
+              (updatedModules) => {
+                console.log("update applied");
+              },
+              (err) => {
+                console.log(err);
+              }
+            );
+        }
+      }
+      break;
+  }
+};
 
 const App = () => {
-  // const app = use(index);
+  const app = use(index);
   console.log("recs1");
   const ping = () => {
     console.log("ping");
@@ -54,7 +54,7 @@ const App = () => {
   const [count, setCount] = useState(0);
   return (
     <>
-      {/* {app} */}
+      {app}
       <div>{count}</div>
       <button onClick={() => setCount(count + 1)}>inc</button>
       <button onClick={ping}>ping</button>

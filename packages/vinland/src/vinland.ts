@@ -17,7 +17,7 @@ import morgan from "morgan";
 import bodyParser from "body-parser";
 import ws from "ws";
 import { PORT } from "./const";
-import { bundle, CompilerType, setupCompiler } from "./bundle";
+import { bundle, CompilerType } from "./bundle";
 
 register();
 
@@ -52,8 +52,6 @@ const pipeComponentToRes = (comp, res) => {
 };
 
 async function createServer() {
-  const compiles = setupCompiler({ cwd: root });
-
   const ensureServerComponent = async (
     name: string,
     options?: { routePath: string }
@@ -66,7 +64,7 @@ async function createServer() {
         splitted.splice(1, 1);
         routePath = splitted.join("/");
         await bundle({
-          compiler: compiles[CompilerType.Server],
+          compilerType: CompilerType.Server,
           cwd: root,
           routePath,
         });
@@ -85,6 +83,7 @@ async function createServer() {
       // const { default: Component } = await import(
       //   `${outputPath}?cache=${Date.now()}`
       // );
+      console.log("load component:", requirePath);
       const Mod = require(requirePath);
 
       return {
@@ -98,7 +97,7 @@ async function createServer() {
 
   // pre bundle
   console.log("pre bundling...");
-  await bundle({ compiler: compiles[CompilerType.Client], cwd: root });
+  await bundle({ compilerType: CompilerType.Client, cwd: root });
   // .vinland folder created
 
   const LOG_PATH = path.resolve(root, ".vinland", "access.log");

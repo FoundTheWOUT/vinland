@@ -10,169 +10,12 @@ export enum CompilerType {
   Server,
 }
 
-export const setupCompiler = ({ cwd }) => {
-  let buildOutput = path.resolve(cwd, ".vinland");
-  // if (routePath) {
-  //   buildOutput = path.resolve(buildOutput, "routes");
-  // }
-  // const filename = routePath ? routePath.split("/").pop() : "";
-
-  const compiler = webpack({
-    mode: isProduction ? "production" : "development",
-    devtool: isProduction ? "source-map" : "cheap-module-source-map",
-    entry: {
-      "main.js": [],
-      // [routePath ? filename : "main"]: path.resolve(
-      //   cwd,
-      //   routePath ? `src/routes/${routePath}.jsx` : "src/main.jsx"
-      // ),
-      // "react-fast-refresh": require.resolve("./runtime"),
-    },
-    context: path.resolve(cwd),
-    output: {
-      publicPath: "/__vinland/",
-      path: buildOutput,
-      filename: "[name].js",
-      chunkFilename: "[name].js",
-    },
-    resolve: {
-      extensions: [".jsx", ".js", ".ts", ".tsx"],
-    },
-    module: {
-      rules: [
-        {
-          test: /\.css$/i,
-          use: ["style-loader", "css-loader"],
-        },
-        {
-          test: /\.[jt]s|[jt]sx$/,
-          exclude: /node_modules/,
-          use: [
-            {
-              loader: "swc-loader",
-              options: {
-                jsc: {
-                  transform: {
-                    react: {
-                      development: isDevelopment,
-                      // refresh: isDevelopment,
-                    },
-                  },
-                },
-              },
-            },
-          ],
-        },
-      ],
-    },
-    plugins: [
-      //   new HtmlWebpackPlugin({
-      //     inject: true,
-      //     template: path.resolve(cwd, "../public/index.html"),
-      //   }),
-      // ...[
-      //   isDevelopment &&
-      //     new ReactRefreshWebpackPlugin({
-      //       // overlay: {
-      //       //   sockIntegration: require.resolve("./hmr-client")
-      //       // },
-      //     }),
-      // ].filter(Boolean),
-      new ReactServerWebpackPlugin({ isServer: false }),
-      // new webpack.HotModuleReplacementPlugin(),
-    ],
-    // externals: {
-    //   react: ["react", "react-dom"],
-    // },
-  });
-
-  compiler.hooks.emit.tap("VinlandHMR", (stats) => {
-    // console.log("VinlandHMR:", stats);
-  });
-
-  const serverCompiler = webpack({
-    mode: isProduction ? "production" : "development",
-    devtool: isProduction ? "source-map" : "cheap-module-source-map",
-    entry: {
-      "main.js": [],
-      // [routePath ? filename : "main"]: path.resolve(
-      //   cwd,
-      //   routePath ? `src/routes/${routePath}.jsx` : "src/main.jsx"
-      // ),
-      // "react-fast-refresh": require.resolve("./runtime"),
-    },
-    context: path.resolve(cwd),
-    output: {
-      publicPath: "/__vinland/",
-      path: buildOutput,
-      filename: "[name].js",
-      chunkFilename: "[name].js",
-      libraryTarget: "commonjs2",
-      globalObject: "this",
-    },
-    resolve: {
-      extensions: [".jsx", ".js", ".ts", ".tsx"],
-    },
-    module: {
-      rules: [
-        {
-          test: /\.css$/i,
-          use: ["style-loader", "css-loader"],
-        },
-        {
-          test: /\.[jt]s|[jt]sx$/,
-          exclude: /node_modules/,
-          use: [
-            {
-              loader: "swc-loader",
-              options: {
-                jsc: {
-                  transform: {
-                    react: {
-                      development: isDevelopment,
-                      // refresh: isDevelopment,
-                    },
-                  },
-                },
-              },
-            },
-          ],
-        },
-      ],
-    },
-    plugins: [
-      //   new HtmlWebpackPlugin({
-      //     inject: true,
-      //     template: path.resolve(cwd, "../public/index.html"),
-      //   }),
-      // ...[
-      //   isDevelopment &&
-      //     new ReactRefreshWebpackPlugin({
-      //       // overlay: {
-      //       //   sockIntegration: require.resolve("./hmr-client")
-      //       // },
-      //     }),
-      // ].filter(Boolean),
-      new ReactServerWebpackPlugin({ isServer: false }),
-      // new webpack.HotModuleReplacementPlugin(),
-    ],
-    // externals: {
-    //   react: ["react", "react-dom"],
-    // },
-  });
-
-  return {
-    [CompilerType.Client]: compiler,
-    [CompilerType.Server]: serverCompiler,
-  };
-};
-
 export const bundle = async ({
-  compiler,
+  compilerType,
   cwd,
   routePath,
 }: {
-  compiler: Compiler;
+  compilerType: CompilerType;
   cwd: string;
   routePath?: string;
 }) => {
@@ -180,6 +23,157 @@ export const bundle = async ({
   if (routePath) {
     buildOutput = path.resolve(buildOutput, "routes");
   }
+  const filename = routePath ? routePath.split("/").pop() : "";
+
+  const setupCompiler = () => {
+    const compiler = webpack({
+      mode: isProduction ? "production" : "development",
+      devtool: isProduction ? "source-map" : "cheap-module-source-map",
+      entry: {
+        [routePath ? filename : "main"]: path.resolve(
+          cwd,
+          routePath ? `src/routes/${routePath}.jsx` : "src/main.jsx"
+        ),
+      },
+      context: path.resolve(cwd),
+      output: {
+        publicPath: "/__vinland/",
+        path: buildOutput,
+        filename: "[name].js",
+        chunkFilename: "[name].js",
+      },
+      resolve: {
+        extensions: [".jsx", ".js", ".ts", ".tsx"],
+      },
+      module: {
+        rules: [
+          {
+            test: /\.css$/i,
+            use: ["style-loader", "css-loader"],
+          },
+          {
+            test: /\.[jt]s|[jt]sx$/,
+            exclude: /node_modules/,
+            use: [
+              {
+                loader: "swc-loader",
+                options: {
+                  jsc: {
+                    transform: {
+                      react: {
+                        development: isDevelopment,
+                        // refresh: isDevelopment,
+                      },
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      },
+      plugins: [
+        //   new HtmlWebpackPlugin({
+        //     inject: true,
+        //     template: path.resolve(cwd, "../public/index.html"),
+        //   }),
+        // ...[
+        //   isDevelopment &&
+        //     new ReactRefreshWebpackPlugin({
+        //       // overlay: {
+        //       //   sockIntegration: require.resolve("./hmr-client")
+        //       // },
+        //     }),
+        // ].filter(Boolean),
+        new ReactServerWebpackPlugin({ isServer: false }),
+        new webpack.HotModuleReplacementPlugin(),
+      ],
+      // externals: {
+      //   react: ["react", "react-dom"],
+      // },
+    });
+
+    compiler.hooks.emit.tap("VinlandHMR", (stats) => {
+      // console.log("VinlandHMR:", stats);
+    });
+
+    const serverCompiler = webpack({
+      mode: isProduction ? "production" : "development",
+      devtool: isProduction ? "source-map" : "cheap-module-source-map",
+      entry: {
+        [routePath ? filename : "main"]: path.resolve(
+          cwd,
+          routePath ? `src/routes/${routePath}.jsx` : "src/main.jsx"
+        ),
+        // "react-fast-refresh": require.resolve("./runtime"),
+      },
+      context: path.resolve(cwd),
+      output: {
+        publicPath: "/__vinland/",
+        path: buildOutput,
+        filename: "[name].js",
+        chunkFilename: "[name].js",
+        libraryTarget: "commonjs2",
+        globalObject: "this",
+      },
+      resolve: {
+        extensions: [".jsx", ".js", ".ts", ".tsx"],
+      },
+      module: {
+        rules: [
+          {
+            test: /\.css$/i,
+            use: ["style-loader", "css-loader"],
+          },
+          {
+            test: /\.[jt]s|[jt]sx$/,
+            exclude: /node_modules/,
+            use: [
+              {
+                loader: "swc-loader",
+                options: {
+                  jsc: {
+                    transform: {
+                      react: {
+                        development: isDevelopment,
+                        // refresh: isDevelopment,
+                      },
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        ],
+      },
+      plugins: [
+        //   new HtmlWebpackPlugin({
+        //     inject: true,
+        //     template: path.resolve(cwd, "../public/index.html"),
+        //   }),
+        // ...[
+        //   isDevelopment &&
+        //     new ReactRefreshWebpackPlugin({
+        //       // overlay: {
+        //       //   sockIntegration: require.resolve("./hmr-client")
+        //       // },
+        //     }),
+        // ].filter(Boolean),
+        new ReactServerWebpackPlugin({ isServer: false }),
+        new webpack.HotModuleReplacementPlugin(),
+      ],
+      // externals: {
+      //   react: ["react", "react-dom"],
+      // },
+    });
+
+    return {
+      [CompilerType.Client]: compiler,
+      [CompilerType.Server]: serverCompiler,
+    };
+  };
+
+  const compiler = setupCompiler()[compilerType];
 
   if (!routePath) {
     rmSync(buildOutput, { recursive: true, force: true });
