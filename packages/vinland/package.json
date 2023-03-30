@@ -11,6 +11,8 @@
     "@types/morgan": "^1.9.4",
     "@types/ws": "^8.5.4",
     "morgan": "^1.10.0",
-    "react-refresh": "^0.14.0"
+    "react-refresh": "^0.14.0",
+    "type-fest": "^3.7.2",
+    "webpack": "^5.77.0"
   }
 }

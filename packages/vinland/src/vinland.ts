@@ -17,7 +17,7 @@ import morgan from "morgan";
 import bodyParser from "body-parser";
 import ws from "ws";
 import { PORT } from "./const";
-import { bundle } from "./bundle";
+import { bundle, CompilerType, setupCompiler } from "./bundle";
 
 register();
 
@@ -37,44 +37,6 @@ function requireUncached(module) {
   return require(module);
 }
 
-const ensureServerComponent = async (
-  name: string,
-  options?: { routePath: string }
-) => {
-  let { routePath = "" } = options ?? {};
-
-  try {
-    if (routePath.startsWith("/__vinland")) {
-      const splitted = routePath.split("/");
-      splitted.splice(1, 1);
-      routePath = splitted.join("/");
-      await bundle({ cwd: root, routePath });
-    }
-    const requirePath = path.resolve(
-      root,
-      routePath
-        ? `.vinland/routes${routePath}.js`
-        : name === "index"
-        ? `../dist/App.jsx`
-        : `../dist/${name}.server.jsx`
-    );
-
-    // cache query is to disable import caching.
-    // https://github.com/nodejs/modules/issues/307
-    // const { default: Component } = await import(
-    //   `${outputPath}?cache=${Date.now()}`
-    // );
-    const Mod = require(requirePath);
-
-    return {
-      Component: Mod.default,
-    };
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
-
 const pipeComponentToRes = (comp, res) => {
   // serialize component to stream
   const manifest = readFileSync(
@@ -90,9 +52,53 @@ const pipeComponentToRes = (comp, res) => {
 };
 
 async function createServer() {
+  const compiles = setupCompiler({ cwd: root });
+
+  const ensureServerComponent = async (
+    name: string,
+    options?: { routePath: string }
+  ) => {
+    let { routePath = "" } = options ?? {};
+
+    try {
+      if (routePath.startsWith("/__vinland")) {
+        const splitted = routePath.split("/");
+        splitted.splice(1, 1);
+        routePath = splitted.join("/");
+        await bundle({
+          compiler: compiles[CompilerType.Server],
+          cwd: root,
+          routePath,
+        });
+      }
+      const requirePath = path.resolve(
+        root,
+        routePath
+          ? `.vinland/routes${routePath}.js`
+          : name === "index"
+          ? `../dist/App.jsx`
+          : `../dist/${name}.server.jsx`
+      );
+
+      // cache query is to disable import caching.
+      // https://github.com/nodejs/modules/issues/307
+      // const { default: Component } = await import(
+      //   `${outputPath}?cache=${Date.now()}`
+      // );
+      const Mod = require(requirePath);
+
+      return {
+        Component: Mod.default,
+      };
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  };
+
   // pre bundle
   console.log("pre bundling...");
-  await bundle({ cwd: root });
+  await bundle({ compiler: compiles[CompilerType.Client], cwd: root });
   // .vinland folder created
 
   const LOG_PATH = path.resolve(root, ".vinland", "access.log");
